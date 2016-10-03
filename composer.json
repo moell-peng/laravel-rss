@@ -1,5 +1,5 @@
 {
-    "name": "moell/rss-laravel",
+    "name": "moell/laravel-rss",
     "description": "Based on moell/rss development laravel version",
     "keywords": ["rss","laravel"],
     "type": "library",
