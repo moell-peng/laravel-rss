@@ -1,0 +1,22 @@
+{
+    "name": "moell/rss-laravel",
+    "description": "Based on moell/rss development laravel version",
+    "keywords": ["rss","laravel"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Moell",
+            "email": "moell91@foxmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "moell/rss" : "1.*"
+    },
+    "autoload" : {
+        "psr-4": {
+            "Moell\\LaravelRss\\": "src/"
+        }
+    }
+}
