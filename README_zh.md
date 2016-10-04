@@ -1,5 +1,5 @@
 ## moell/laravel-rss
-在moell/rss基础上开发的laravel包
+在[moell/rss](https://github.com/moell-peng/rss)基础上开发的laravel包
 
 ### RSS规范
 [http://www.rssboard.org/rss-specification](http://www.rssboard.org/rss-specification)
