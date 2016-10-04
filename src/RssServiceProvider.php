@@ -3,7 +3,7 @@
 namespace Moell\LaravelRss;
 
 use Illuminate\Support\ServiceProvider;
-use Moell\Rss;
+use Moell\Rss\Rss;
 
 
 class RssServiceProvider extends ServiceProvider
@@ -17,7 +17,7 @@ class RssServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->singleton('Moell\Rss\Rss', function($app) {
+        $this->app->singleton('rss', function($app) {
             return new Rss();
         });
     }

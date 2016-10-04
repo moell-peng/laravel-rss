@@ -1,16 +1,25 @@
-## moell/rss
-moell/rss是遵循RSS２.0标准的包
+## moell/laravel-rss
+在moell/rss基础上开发的laravel包
 
 ### RSS规范
 [http://www.rssboard.org/rss-specification](http://www.rssboard.org/rss-specification)
 
 
 ### 要求
-PHP >= 5.4.0
+Laravel 5+
 
 ### 安装
 ```shell
-composer require "moell/rss:1.*"
+composer require moell/laravel-rss:1.*
+```
+
+### 修改config/app.php
+```shell
+#在providers中追加
+Moell\LaravelRss\RssServiceProvider::class,
+
+#在aliases中追加
+'Rss'   => Moell\LaravelRss\RssFacade::class,
 ```
 ### 提供接口
 ```php
@@ -34,46 +43,59 @@ public function __toString();
 
 ### 用法
 ```php
-$rss = new \Moell\Rss\Rss();
+namespace App\Http\Controllers;
 
-$channel = [
-    'title' => 'title',
-    'link'  => 'http://moell.cn',
-    'description' => 'description',
-    'category' => [
-        'value' => 'html',
-        'attr' => [
-            'domain' => 'http://www.moell.cn'
-        ]
-    ]
-];
+use Illuminate\Http\Request;
 
-$rss->channel($channel);
+use App\Http\Requests;
+use Rss;
 
-$items = [];
-for($i = 0; $i < 2; $i++) {
-    $item = [
-        'title' => "title".$i,
-        'description' => 'description',
-        'source' => [
-            'value' => 'moell.cn',
-            'attr' => [
-                'url' => 'http://www.moell.cn'
+class RssController extends Controller
+{
+    public function index()
+    {
+        $channel = [
+            'title' => 'title',
+            'link'  => 'http://moell.cn',
+            'description' => 'description',
+            'category' => [
+                'value' => 'html',
+                'attr' => [
+                    'domain' => 'http://www.moell.cn'
+                ]
             ]
-        ]
-    ];
-    $items[] = $item;
-    $rss->item($item);
+        ];
+
+        $rss = Rss::channel($channel);
+
+        $items = [];
+        for($i = 0; $i < 2; $i++) {
+            $item = [
+                'title' => "title".$i,
+                'description' => 'description',
+                'source' => [
+                    'value' => 'moell.cn',
+                    'attr' => [
+                        'url' => 'http://www.moell.cn'
+                    ]
+                ]
+            ];
+            $items[] = $item;
+            $rss->item($item);
+        }
+
+        return response($rss, 200, ['Content-Type' => 'text/xml']);
+
+        //其他获取方式
+        //return response($rss->build()->asXML(), 200, ['Content-Type' => 'text/xml']);
+
+        //return response($rss->fastBuild($channel, $items)->asXML(), 200, ['Content-Type' => 'text/xml']);
+
+        //return response($rss->channel($channel)->items($items)->build()->asXML(), 200, ['Content-Type' => 'text/xml']);
+
+    }
 }
 
-echo $rss;	//获取xml
-
-//其他获取方式
-$rss->build()->asXML();
-
-$rss->fastBuild($channel, $items)->asXML();
-
-$rss->channel($channel)->items($items)->build()->asXML();
 ```
 ### 生成结果
 ```xml

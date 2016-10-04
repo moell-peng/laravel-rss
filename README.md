@@ -1,5 +1,5 @@
 ## moell/rss
-moell/rss is a package that follows the RSS 2.0 standard
+Laravel package developed on the basis of [moell/rss](https://github.com/moell-peng/rss)
 
 ### RSS specification
 [http://www.rssboard.org/rss-specification](http://www.rssboard.org/rss-specification)
@@ -8,12 +8,21 @@ moell/rss is a package that follows the RSS 2.0 standard
 [README](README_zh.md)
 
 ### Requirement
-PHP >= 5.4.0
+Laravel 5+
 
 ### Installation
 ```shell
-composer require "moell/rss:1.*"
+composer require moell/laravel-rss:1.*
 ```
+### Modify config/app.php
+```shell
+#Append in providers
+Moell\LaravelRss\RssServiceProvider::class,
+
+#Append in aliases
+'Rss'   => Moell\LaravelRss\RssFacade::class,
+```
+
 ### Provides an interface
 ```php
 
@@ -34,46 +43,59 @@ public function __toString();
 
 ### Usage
 ```php
-$rss = new \Moell\Rss\Rss();
 
-$channel = [
-    'title' => 'title',
-    'link'  => 'http://moell.cn',
-    'description' => 'description',
-    'category' => [
-        'value' => 'html',
-        'attr' => [
-            'domain' => 'http://www.moell.cn'
-        ]
-    ]
-];
+namespace App\Http\Controllers;
 
-$rss->channel($channel);
+use Illuminate\Http\Request;
 
-$items = [];
-for($i = 0; $i < 2; $i++) {
-    $item = [
-        'title' => "title".$i,
-        'description' => 'description',
-        'source' => [
-            'value' => 'moell.cn',
-            'attr' => [
-                'url' => 'http://www.moell.cn'
+use App\Http\Requests;
+use Rss;
+
+class RssController extends Controller
+{
+    public function index()
+    {
+        $channel = [
+            'title' => 'title',
+            'link'  => 'http://moell.cn',
+            'description' => 'description',
+            'category' => [
+                'value' => 'html',
+                'attr' => [
+                    'domain' => 'http://www.moell.cn'
+                ]
             ]
-        ]
-    ];
-    $items[] = $item;
-    $rss->item($item);
+        ];
+
+        $rss = Rss::channel($channel);
+
+        $items = [];
+        for($i = 0; $i < 2; $i++) {
+            $item = [
+                'title' => "title".$i,
+                'description' => 'description',
+                'source' => [
+                    'value' => 'moell.cn',
+                    'attr' => [
+                        'url' => 'http://www.moell.cn'
+                    ]
+                ]
+            ];
+            $items[] = $item;
+            $rss->item($item);
+        }
+
+        return response($rss, 200, ['Content-Type' => 'text/xml']);
+
+        //Other acquisition methods
+        //return response($rss->build()->asXML(), 200, ['Content-Type' => 'text/xml']);
+
+        //return response($rss->fastBuild($channel, $items)->asXML(), 200, ['Content-Type' => 'text/xml']);
+
+        //return response($rss->channel($channel)->items($items)->build()->asXML(), 200, ['Content-Type' => 'text/xml']);
+
+    }
 }
-
-echo $rss;	//Get xml
-
-//Other acquisition methods
-$rss->build()->asXML();
-
-$rss->fastBuild($channel, $items)->asXML();
-
-$rss->channel($channel)->items($items)->build()->asXML();
 ```
 ### Generate results
 ```xml
